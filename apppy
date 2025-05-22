@@ -1,11 +1,12 @@
 from flask import Flask, request, jsonify
 import requests
 import openai
+import os, requests, json
 
 app = Flask(__name__)
 
 # === CONFIGURAÇÕES ===
-openai.api_key = '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'  # substitua pela sua API Key
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 Z_API_URL = 'https://api.z-api.io/instances/SEU_ID/token/SEU_TOKEN/send-messages'  # substitua com seus dados
 
 # === FUNÇÃO PARA ENVIAR MENSAGEM PARA O CHATGPT ===
