@@ -1,0 +1,18 @@
+# Created by venv; see https://docs.python.org/3/library/venv.html
+# Ignore virtualenv
+venv/
+
+# Ignore arquivos de ambiente
+#.env
+
+# Ignore arquivos de sistema
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore arquivos temporários
+*.log
+.DS_Store
+
+# Arquivo gerado automaticamente
+database/knowledge.json

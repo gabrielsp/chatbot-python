@@ -1,0 +1,44 @@
+from flask import Flask, request, jsonify
+import requests
+import openai
+
+app = Flask(__name__)
+
+# === CONFIGURAÇÕES ===
+openai.api_key = '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'  # substitua pela sua API Key
+Z_API_URL = 'https://api.z-api.io/instances/SEU_ID/token/SEU_TOKEN/send-messages'  # substitua com seus dados
+
+# === FUNÇÃO PARA ENVIAR MENSAGEM PARA O CHATGPT ===
+def gerar_resposta(mensagem_usuario):
+    resposta = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "Você é um assistente atencioso e prestativo."},
+            {"role": "user", "content": mensagem_usuario}
+        ]
+    )
+    return resposta['choices'][0]['message']['content']
+
+# === ROTA PARA RECEBER MENSAGEM DO WHATSAPP ===
+@app.route('/webhook', methods=['POST'])
+def receber_mensagem():
+    dados = request.json
+    mensagem = dados.get('message')
+    numero = dados.get('phone')  # número no formato internacional: +55...
+
+    if mensagem and numero:
+        resposta = gerar_resposta(mensagem)
+
+        payload = {
+            "phone": numero,
+            "message": resposta
+        }
+
+        # Envia a resposta via Z-API
+        requests.post(Z_API_URL, json=payload)
+
+    return jsonify({'status': 'Mensagem recebida'}), 200
+
+# === INICIAR O SERVIDOR ===
+if __name__ == '__main__':
+    app.run(port=5000)
