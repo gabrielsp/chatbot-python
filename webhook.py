@@ -31,13 +31,8 @@ def gerar_menu_informacoes():
         with open('database/knowledge.json', 'r', encoding='utf-8') as f:
             dados = json.load(f)
 
-        topicos = set()
-        for item in dados:
-            pergunta = item.get("pergunta", "").strip().capitalize()
-            if pergunta:
-                topicos.add(pergunta)
-
-        menu = "\n".join([f"🔹 {topico}" for topico in sorted(topicos)])
+        topicos = [f"🔹 {chave.replace('_', ' ').capitalize()}" for chave in dados.keys()]
+        menu = "\n".join(sorted(topicos))
         return menu
     except Exception as e:
         print("Erro ao gerar menu:", e)
@@ -124,14 +119,14 @@ def receber_mensagem():
                 'ultimas_interacoes': ultimas_interacoes
             }
 
-            # Boas-vindas se primeira do dia
-            if precisa_mensagem_boas_vindas(numero):
+            # Sempre envia boas-vindas na primeira mensagem do usuário
+            if len(historico_usuarios[numero]) == 1:
                 menu = gerar_menu_informacoes()
                 msg = (
-                    "👋 Olá! Bem-vindo ao atendimento automático da *[Nome da Sua Empresa]*.\n\n"
+                    "👋 Olá! Bem-vindo ao atendimento automático da *TechVision*.\n\n"
                     "Estou aqui para te ajudar com informações da empresa. Veja alguns tópicos disponíveis:\n\n"
                     f"{menu}\n\n"
-                    "Digite uma palavra-chave ou pergunta. 😉"
+                    "Digite uma palavra-chave, como *produtos*, *empresa* ou *atendimento* para saber mais. 😉"
                 )
                 enviar_mensagem(numero, msg)
                 salvar_conversa(numero, msg, tipo='bot')
