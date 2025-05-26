@@ -1,17 +1,30 @@
 import json
-from .base import EstrategiaResposta
+import os
+import unicodedata
 
-class RespostaEmpresa(EstrategiaResposta):
-    def __init__(self, arquivo_conhecimento="database/knowledge.json"):
-        with open(arquivo_conhecimento, "r", encoding="utf-8") as f:
-            self.conhecimento = json.load(f)
+class RespostaEmpresa:
+    def __init__(self):
+        self.dados = self.carregar_base_conhecimento()
 
-    def executar(self, numero, mensagem, contexto):
-        return self.responder(mensagem)
+    def carregar_base_conhecimento(self):
+        try:
+            with open('database/knowledge.json', 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print("Erro ao carregar base de conhecimento:", e)
+            return []
 
-    def responder(self, pergunta):
-        pergunta = pergunta.lower()
-        for categoria, conteudo in self.conhecimento.items():
-            if any(palavra in pergunta for palavra in categoria.lower().split()):
-                return f"🔎 Informações sobre '{categoria}':\n{conteudo}"
-        return "❓ Desculpe, não encontrei essa informação nos dados da empresa."
+    def normalizar_texto(self, texto):
+        texto = texto.lower().strip()
+        texto = unicodedata.normalize('NFKD', texto).encode('ASCII', 'ignore').decode('utf-8')
+        return texto
+
+    def executar(self, numero, texto_usuario, contexto):
+        texto_usuario = self.normalizar_texto(texto_usuario)
+
+        for item in self.dados:
+            pergunta = self.normalizar_texto(item.get("pergunta", ""))
+            if pergunta in texto_usuario or texto_usuario in pergunta:
+                return item.get("resposta")
+
+        return None
