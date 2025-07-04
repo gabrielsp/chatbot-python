@@ -99,6 +99,3 @@ chatbot-python/
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou enviar pull requests.
 
 Este é um chatbot desenvolvido em Python com Flask que responde automaticamente mensagens recebidas via API do WhatsApp Business.
-
-## 📂 Estrutura
-
